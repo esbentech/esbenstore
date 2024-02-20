@@ -9,3 +9,55 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model Usuario {
+  id             Int          @id @default(autoincrement())
+  nombre         String
+  apellidos      String
+  identificacion String       @unique
+  telefono       String       @unique
+  correo         String       @unique
+  contrasenna    String
+  estado         Boolean      @default(true)
+  roles          Rol[]
+  direcciones    Direccion[]
+}
+
+model Rol {
+  id          Int       @id @default(autoincrement())
+  descripcion String
+  usuarios    Usuario[]
+}
+model Direccion {
+  id              Int      @id @default(autoincrement())
+  provincia       String
+  canton          String
+  distrito        String
+  direccionExacta String
+  codigoPostal    String
+  telefono        String
+  usuarioId       Int
+  usuario         Usuario  @relation(fields: [usuarioId], references: [id])
+}
+model Categoria {
+  id          Int        @id @default(autoincrement())
+  descripcion String
+  productos   Producto[]
+}
+model Producto {
+  id          Int         @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  precio      Float
+  cantidad    Int
+  estado      String // Nuevo, Usado-Como nuevo, Usado-Buen estado, Usado-Aceptable 
+  categorias  Categoria[]
+  fotos       Foto[]
+ 
+}
+model Foto {
+  id         Int      @id @default(autoincrement())
+  url        String   @db.LongText
+  productoId Int
+  producto   Producto @relation(fields: [productoId], references: [id])
+}
